@@ -47,7 +47,7 @@ function App() {
             element={<Login setLoggedIn={setLoggedIn} setEmail={setEmail} />}
           />
           <Route
-            path="/sign"
+            path="/signup"
             element={<Signup setLoggedIn={setLoggedIn} setEmail={setEmail} setPassword={setPassword}/>}
           />
         </Routes>

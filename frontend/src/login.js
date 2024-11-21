@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 const Login = (props) => {
     const [email, setEmail] = useState('');
@@ -36,42 +37,21 @@ const Login = (props) => {
     const onButtonClick = async () => {
         if (!validateInputs()) return;
 
-        const accountExists = await checkAccountExists();
-        if (accountExists) {
-            await logIn();
-        } else if (window.confirm(`An account does not exist with this email address: ${email}. Do you want to create a new account?`)) {
-            await logIn();
-        }
-    };
+        try {
+            const response = await axios.post('http://localhost:5000/api/auth/login', { email, password });
+            const { token, message } = response.data;
 
-    const checkAccountExists = async () => {
-        const response = await fetch('http://localhost:3080/check-account', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ email }),
-        });
-        const result = await response.json();
-        return result?.userExists;
-    };
-
-    const logIn = async () => {
-        const response = await fetch('http://localhost:3080/auth', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ email, password }),
-        });
-        const result = await response.json();
-        if (result.message === 'success') {
-            localStorage.setItem('user', JSON.stringify({ email, token: result.token }));
-            props.setLoggedIn(true);
-            props.setEmail(email);
-            navigate('/');
-        } else {
-            window.alert('Wrong email or password');
+            if (message === 'success') {
+                localStorage.setItem('user', JSON.stringify({ email, token }));
+                props.setLoggedIn(true);
+                props.setEmail(email);
+                navigate('/');
+            } else {
+                window.alert('Wrong email or password');
+            }
+        } catch (error) {
+            console.error('Error logging in:', error);
+            window.alert(error.response?.data?.message || 'An error occurred during login.');
         }
     };
 
@@ -93,6 +73,7 @@ const Login = (props) => {
             <br />
             <div className="inputContainer">
                 <input
+                    type="password"
                     value={password}
                     placeholder="Enter your password here"
                     onChange={(ev) => setPassword(ev.target.value)}

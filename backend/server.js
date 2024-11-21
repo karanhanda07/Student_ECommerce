@@ -1,27 +1,23 @@
 const express = require('express');
-const cors = require('cors');
-const { connectToMongoDB } = require('./utils/connectToMongoDB');
+const connectToMongoDB = require('./utils/connectToMongoDB');
 const authRoutes = require('./routes/authRoutes');
-
-// Initialize Express app
+const bodyParser = require('body-parser');
+const cors = require('cors');
 const app = express();
 
-// Set up CORS and JSON middlewares
+// Enable CORS for all origins
 app.use(cors());
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+// Middleware
+app.use(bodyParser.json());
 
-// Basic home route for the API
-app.get('/', (_req, res) => {
-    res.send('Auth API.\nPlease use POST /auth, POST /signup & POST /verify for authentication');
-});
-
-// Connect to MongoDB
+// MongoDB Connection
 connectToMongoDB();
 
-// Use the auth routes
-app.use('/', authRoutes);
+// Routes
+app.use('/api/auth', authRoutes);
 
-app.listen(3080, () => {
-    console.log('Server is running on http://localhost:3080');
+// Start the server
+const PORT = 5000;
+app.listen(PORT, () => {
+    console.log(`Server is running on http://localhost:${PORT}`);
 });
