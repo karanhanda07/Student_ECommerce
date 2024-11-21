@@ -1,9 +1,9 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import Home from './home';
-import Login from './login';
+import Login from './Components/Auth/login';
 import './App.css';
 import { useEffect, useState } from 'react';
-import Signup from './signup';
+import Signup from './Components/Auth/signup';
 
 function App() {
   const [loggedIn, setLoggedIn] = useState(false);
@@ -16,23 +16,7 @@ function App() {
       setLoggedIn(false);
       return;
     }
-
-    verifyToken(user.token, user.email);
   }, []);
-
-  const verifyToken = (token, email) => {
-    fetch('http://localhost:3080/verify', {
-      method: 'POST',
-      headers: {
-        'jwt-token': token,
-      },
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        setLoggedIn(data.message === 'success');
-        setEmail(email || '');
-      });
-  };
 
   return (
     <div className="App">

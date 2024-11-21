@@ -13,6 +13,10 @@ const Home = ({ loggedIn, email, setLoggedIn }) => {
         }
     };
 
+    const handleSignInClick = () => {
+        navigate('/signup');
+    };
+
     return (
         <div className="mainContainer">
             <div className="titleContainer">
@@ -27,6 +31,14 @@ const Home = ({ loggedIn, email, setLoggedIn }) => {
                     value={loggedIn ? 'Log out' : 'Log in'}
                 />
                 {loggedIn && <div>Your email address is {email}</div>}
+                {!loggedIn && (
+                    <input
+                        className="inputButton"
+                        type="button"
+                        onClick={handleSignInClick}
+                        value="Sign up"
+                    />
+                )}
             </div>
         </div>
     );
