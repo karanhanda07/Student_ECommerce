@@ -1,79 +1,53 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
-const Signup = (props) => {
+const Signup = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
-    const [emailError, setEmailError] = useState('');
-    const [passwordError, setPasswordError] = useState('');
-    const [confirmPasswordError, setConfirmPasswordError] = useState('');
-
+    const [errors, setErrors] = useState({});
+    const [successMessage, setSuccessMessage] = useState('');
     const navigate = useNavigate();
 
     const validateInputs = () => {
-        let isValid = true;
-        setEmailError('');
-        setPasswordError('');
-        setConfirmPasswordError('');
-
-        if (email === '') {
-            setEmailError('Please enter your email');
-            isValid = false;
-        } else if (!/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/.test(email)) {
-            setEmailError('Please enter a valid email');
-            isValid = false;
-        }
-
-        if (password === '') {
-            setPasswordError('Please enter a password');
-            isValid = false;
-        } else if (password.length < 8) {
-            setPasswordError('The password must be 8 characters or longer');
-            isValid = false;
-        }
-
-        if (confirmPassword !== password) {
-            setConfirmPasswordError('Passwords do not match');
-            isValid = false;
-        }
-
-        return isValid;
+        const newErrors = {};
+        if (!email) newErrors.email = 'Email is required.';
+        if (!password) newErrors.password = 'Password is required.';
+        if (!confirmPassword) newErrors.confirmPassword = 'Confirm Password is required.';
+        if (password !== confirmPassword) newErrors.confirmPassword = 'Passwords do not match.';
+        return newErrors;
     };
 
-    const onButtonClick = () => {
-        if (!validateInputs()) return;
+    const onSignupClick = async () => {
+        // Clear previous errors and messages
+        setErrors({});
+        setSuccessMessage('');
 
-        createAccount();
-    };
+        // Validate inputs
+        const newErrors = validateInputs();
+        if (Object.keys(newErrors).length > 0) {
+            setErrors(newErrors);
+            return;
+        }
 
-    const createAccount = async () => {
         try {
-            const response = await fetch('http://localhost:3080/signup', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ email, password }),
+            const response = await axios.post('http://localhost:5000/api/auth/signup', {
+                email,
+                password,
+                confirmPassword,
             });
-            const result = await response.json();
-            if (result.message === 'success') {
-                localStorage.setItem('user', JSON.stringify({ email, token: result.token }));
-                props.setLoggedIn(true);
-                props.setEmail(email);
-                navigate('/');
-            } else {
-                window.alert('Error creating account');
-            }
+            setSuccessMessage(response.data.message);
+            navigate('/login');
         } catch (error) {
-            console.error('Error creating account:', error);
-            window.alert('An error occurred during signup. Please try again.');
+            setErrors({ server: error.response?.data?.error || 'Something went wrong.' });
         }
     };
 
     return (
-        <div>
+        <div className="signup-container">
             <h2>Signup</h2>
+            {successMessage && <div className="success-message">{successMessage}</div>}
             <div>
                 <input
                     type="email"
@@ -82,7 +56,7 @@ const Signup = (props) => {
                     onChange={(ev) => setEmail(ev.target.value)}
                     className="inputBox"
                 />
-                {emailError && <div className="error">{emailError}</div>}
+                {errors.email && <div className="error">{errors.email}</div>}
             </div>
             <div>
                 <input
@@ -92,7 +66,7 @@ const Signup = (props) => {
                     onChange={(ev) => setPassword(ev.target.value)}
                     className="inputBox"
                 />
-                {passwordError && <div className="error">{passwordError}</div>}
+                {errors.password && <div className="error">{errors.password}</div>}
             </div>
             <div>
                 <input
@@ -102,9 +76,10 @@ const Signup = (props) => {
                     onChange={(ev) => setConfirmPassword(ev.target.value)}
                     className="inputBox"
                 />
-                {confirmPasswordError && <div className="error">{confirmPasswordError}</div>}
+                {errors.confirmPassword && <div className="error">{errors.confirmPassword}</div>}
             </div>
-            <button onClick={onButtonClick}>Sign Up</button>
+            {errors.server && <div className="error">{errors.server}</div>}
+            <button onClick={onSignupClick} className="signup-button">Sign Up</button>
         </div>
     );
 };
