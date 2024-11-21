@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import './Auth.css';
 
 const Signup = () => {
     const [email, setEmail] = useState('');
@@ -45,10 +46,12 @@ const Signup = () => {
     };
 
     return (
-        <div className="signup-container">
-            <h2>Signup</h2>
+        <div className="mainContainer">
+            <div className="titleContainer">
+                <h2>Signup</h2>
+            </div>
             {successMessage && <div className="success-message">{successMessage}</div>}
-            <div>
+            <div className="inputContainer">
                 <input
                     type="email"
                     placeholder="Email"
@@ -56,9 +59,9 @@ const Signup = () => {
                     onChange={(ev) => setEmail(ev.target.value)}
                     className="inputBox"
                 />
-                {errors.email && <div className="error">{errors.email}</div>}
+                {errors.email && <div className="errorLabel">{errors.email}</div>}
             </div>
-            <div>
+            <div className="inputContainer">
                 <input
                     type="password"
                     placeholder="Password"
@@ -66,9 +69,9 @@ const Signup = () => {
                     onChange={(ev) => setPassword(ev.target.value)}
                     className="inputBox"
                 />
-                {errors.password && <div className="error">{errors.password}</div>}
+                {errors.password && <div className="errorLabel">{errors.password}</div>}
             </div>
-            <div>
+            <div className="inputContainer">
                 <input
                     type="password"
                     placeholder="Confirm Password"
@@ -76,10 +79,12 @@ const Signup = () => {
                     onChange={(ev) => setConfirmPassword(ev.target.value)}
                     className="inputBox"
                 />
-                {errors.confirmPassword && <div className="error">{errors.confirmPassword}</div>}
+                {errors.confirmPassword && <div className="errorLabel">{errors.confirmPassword}</div>}
             </div>
-            {errors.server && <div className="error">{errors.server}</div>}
-            <button onClick={onSignupClick} className="signup-button">Sign Up</button>
+            {errors.server && <div className="errorLabel">{errors.server}</div>}
+            <div className="inputContainer">
+            <input className="inputButton" type="button" onClick={onSignupClick} value="Signup" />
+            </div>
         </div>
     );
 };
