@@ -2,38 +2,37 @@ const User = require('../Models/User');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const SECRET_KEY = 'your_secret_key';
-// User Signup Controller
-const signup = async (req, res) => {
-    const { email, password, confirmPassword } = req.body;
 
-    // Input validation
-    if (!email || !password || !confirmPassword) {
-        return res.status(400).json({ error: 'All fields are required.' });
-    }
-    if (password !== confirmPassword) {
-        return res.status(400).json({ error: 'Passwords do not match.' });
+// Signup
+const signup = async (req, res) => {
+    const { email, password } = req.body;
+
+    if (!email || !password) {
+        return res.status(400).json({ message: 'Email and password are required.' });
     }
 
     try {
-        // Check if the email is already registered
+        // Check if user exists
         const existingUser = await User.findOne({ email });
         if (existingUser) {
-            return res.status(400).json({ error: 'Email already in use.' });
+            return res.status(400).json({ message: 'Email already exists.' });
         }
 
-        // Hash the password
+        // Hash password
         const hashedPassword = await bcrypt.hash(password, 10);
 
-        // Save the new user to the database
+        // Save user
         const user = new User({ email, password: hashedPassword });
         await user.save();
 
         res.status(201).json({ message: 'User registered successfully.' });
     } catch (error) {
-        console.error('Signup Error:', error);
-        res.status(500).json({ error: 'Server error. Please try again later.' });
+        console.error('Signup error:', error.message);
+        res.status(500).json({ message: 'Server error. Please try again later.' });
     }
 };
+
+// Login
 const login = async (req, res) => {
     const { email, password } = req.body;
 
@@ -53,11 +52,11 @@ const login = async (req, res) => {
         }
 
         const token = jwt.sign({ userId: user._id }, SECRET_KEY, { expiresIn: '1h' });
-
-        res.status(200).json({ message: 'success', token });
+        res.status(200).json({ message: 'Login successful', token });
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: 'Internal server error.' });
+        console.error('Login error:', error.message);
+        res.status(500).json({ message: 'Server error. Please try again later.' });
     }
 };
+
 module.exports = { signup, login };

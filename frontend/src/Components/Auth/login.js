@@ -1,90 +1,49 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import './Auth.css';
-const Login = (props) => {
+
+const Login = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [emailError, setEmailError] = useState('');
-    const [passwordError, setPasswordError] = useState('');
-
+    const [message, setMessage] = useState('');
     const navigate = useNavigate();
 
-    const validateInputs = () => {
-        let isValid = true;
-        setEmailError('');
-        setPasswordError('');
-
-        if (email === '') {
-            setEmailError('Please enter your email');
-            isValid = false;
-        } else if (!/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/.test(email)) {
-            setEmailError('Please enter a valid email');
-            isValid = false;
-        }
-
-        if (password === '') {
-            setPasswordError('Please enter a password');
-            isValid = false;
-        } else if (password.length < 8) {
-            setPasswordError('The password must be 8 characters or longer');
-            isValid = false;
-        }
-
-        return isValid;
-    };
-
-    const onButtonClick = async () => {
-        if (!validateInputs()) return;
-
+    const onLoginClick = async () => {
         try {
             const response = await axios.post('http://localhost:5000/api/auth/login', { email, password });
-            const { token, message } = response.data;
 
-            if (message === 'success') {
-                localStorage.setItem('user', JSON.stringify({ email, token }));
-                props.setLoggedIn(true);
-                props.setEmail(email);
-                navigate('/');
+            if (response.data.message === 'Login successful') {
+                localStorage.setItem('token', response.data.token); // Store token
+                navigate('/welcome'); // Redirect to Welcome page
             } else {
-                window.alert('Wrong email or password');
+                setMessage(response.data.message || 'Login failed.');
             }
         } catch (error) {
-            console.error('Error logging in:', error);
-            window.alert(error.response?.data?.message || 'An error occurred during login.');
+            setMessage(error.response?.data?.message || 'Login failed.');
         }
     };
 
     return (
-        <div className="mainContainer">
-            <div className="titleContainer">
-                <div>Login</div>
-            </div>
+        <div style={{ textAlign: 'center', marginTop: '50px' }}>
+            <h2>Login</h2>
+            <input
+                type="email"
+                placeholder="Email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                style={{ marginBottom: '10px', padding: '10px', width: '300px' }}
+            />
             <br />
-            <div className="inputContainer">
-                <input
-                    value={email}
-                    placeholder="Enter your email here"
-                    onChange={(ev) => setEmail(ev.target.value)}
-                    className="inputBox"
-                />
-                <label className="errorLabel">{emailError}</label>
-            </div>
+            <input
+                type="password"
+                placeholder="Password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                style={{ marginBottom: '10px', padding: '10px', width: '300px' }}
+            />
             <br />
-            <div className="inputContainer">
-                <input
-                    type="password"
-                    value={password}
-                    placeholder="Enter your password here"
-                    onChange={(ev) => setPassword(ev.target.value)}
-                    className="inputBox"
-                />
-                <label className="errorLabel">{passwordError}</label>
-            </div>
-            <br />
-            <div className="inputContainer">
-                <input className="inputButton" type="button" onClick={onButtonClick} value="Log in" />
-            </div>
+            <button onClick={onLoginClick} style={{ padding: '10px 20px', cursor: 'pointer' }}>Login</button>
+            {message && <p style={{ color: 'red', marginTop: '10px' }}>{message}</p>}
         </div>
     );
 };

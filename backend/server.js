@@ -1,29 +1,24 @@
 const express = require('express');
-const connectToMongoDB = require('./utils/connectToMongoDB');
-const authRoutes = require('./routes/authRoutes');
-const bodyParser = require('body-parser');
 const cors = require('cors');
+const mongoose = require('mongoose');
+const authRoutes = require('./routes/authRoutes');
 const app = express();
 
-// Enable CORS for all origins
+// Enable CORS
 app.use(cors());
 
 // Middleware
-app.use(bodyParser.json());
+app.use(express.json());
 
-// MongoDB Connection
-connectToMongoDB();
+// MongoDB connection
+mongoose.connect('mongodb://127.0.0.1:27017/testDB', { useNewUrlParser: true, useUnifiedTopology: true })
+    .then(() => console.log('Connected to MongoDB'))
+    .catch((error) => console.error('MongoDB connection error:', error));
 
 // Routes
 app.use('/api/auth', authRoutes);
 
-// Root Route
-app.get('/', (req, res) => {
-    res.send('Welcome to the API! Use /api/auth for authentication routes.');
-});
-
-// Start the server
-const PORT = 5000;
-app.listen(PORT, () => {
-    console.log(`Server is running on http://localhost:${PORT}`);
+// Start server
+app.listen(5000, () => {
+    console.log('Server is running on http://localhost:5000');
 });
