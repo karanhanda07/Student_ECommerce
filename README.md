@@ -1,81 +1,151 @@
-# Student_Ecommerce
+# StudentEcom
 
-## About
+StudentEcom is a full-stack student marketplace where students can buy and sell items within their community.
 
-This project is a basic e-commerce application designed for students. It allows users to browse products, add them to their cart, and proceed to checkout.
+The project is currently under active development and is being expanded with persistent product listings, role-based access, and improved marketplace functionality.
 
-## Prerequisites
+## Tech Stack
 
-- Node.js and npm (or yarn) installed
-- A code editor (e.g., Visual Studio Code, Sublime Text)
+### Frontend
 
-### Install Dependencies
+* React
+* React Router
+* Axios
+* CSS
 
-```bash
-cd student-commerce
-npm install
-```
+### Backend
 
-### Run the Development Server
+* Node.js
+* Express.js
+* MongoDB
+* Mongoose
+* JWT authentication
+* bcrypt password hashing
 
-Start both the frontend and backend servers simultaneously:
+## Current Features
 
-```bash
-npm run dev
-npm start
-```
+* User signup
+* User login
+* Password hashing with bcrypt
+* JWT-based authentication
+* Student marketplace landing page
+* Buy and Sell pages
+* Product listing interface
+* Responsive homepage design
+
+## In Development
+
+* Persistent product listings with MongoDB
+* User and admin roles
+* Admin dashboard
+* Improved Buy Now flow
+* Product management
+* Improved marketplace UI
 
 ## Project Structure
 
-```
-student-ecommerce/
+```text
+Student_ECommerce/
 ├── frontend/
 │   ├── public/
 │   ├── src/
-│   └── package.json
+│   │   ├── Components/
+│   │   └── assets/
+│   ├── package.json
+│   └── package-lock.json
+│
 ├── backend/
-│   ├── src/
-│   └── package.json
-└── package.json
+│   ├── Models/
+│   ├── controllers/
+│   ├── routes/
+│   ├── server.js
+│   ├── package.json
+│   └── package-lock.json
+│
+└── README.md
 ```
 
-## Backend
+## Prerequisites
 
-The backend handles product data, user authentication, and order processing. It's built using a Node.js framework like Express.js.
+Before running the project, install:
 
-## Frontend
+* Node.js
+* npm
+* MongoDB
 
-The frontend provides the user interface for browsing products, adding to cart, and checkout. It's built using React.js.
+MongoDB must be running locally.
 
-## Contributing
+## Installation
 
-We welcome contributions to improve this project. Please follow these guidelines:
-
-### Create a Branch
-
-Always create a new branch for your work:
+Clone the repository:
 
 ```bash
-git checkout -b feature/your-feature-name
+git clone https://github.com/karanhanda07/Student_ECommerce.git
+cd Student_ECommerce
 ```
 
-### Make Commits
-
-Write clear and concise commit messages:
+Install the frontend dependencies:
 
 ```bash
-git add .
-git commit -m "Add detailed description of your changes"
+cd frontend
+npm install
 ```
 
-### Push Changes
-
-Push your branch to the repository:
+Install the backend dependencies:
 
 ```bash
-git push origin feature/your-feature-name
+cd ../backend
+npm install
 ```
 
-### Create a Pull Request
+## Running the Application
 
-Once your changes are ready, create a pull request to merge your branch into the main branch. Provide a detailed description of your changes and any relevant information for the reviewers.
+The frontend and backend currently run separately.
+
+### Start the Backend
+
+From the `backend` directory:
+
+```bash
+npm start
+```
+
+The backend runs on:
+
+```text
+http://localhost:5000
+```
+
+### Start the Frontend
+
+Open another terminal and go to the `frontend` directory:
+
+```bash
+npm start
+```
+
+The React application runs on:
+
+```text
+http://localhost:3000
+```
+
+## Database
+
+The backend currently connects to a local MongoDB database:
+
+```text
+mongodb://127.0.0.1:27017/testDB
+```
+
+User accounts are stored in the `users` collection.
+
+## Authentication
+
+Passwords are hashed using bcrypt before being stored in MongoDB.
+
+After a successful login, the backend creates a JWT that is used for authentication.
+
+## Project Status
+
+StudentEcom is an ongoing portfolio project. The current focus is improving the original student project into a more complete full-stack marketplace with persistent data, better authentication and authorization, improved buying and selling workflows, and a modern user interface.
