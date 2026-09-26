@@ -1,116 +1,111 @@
-.mainContainer {
-    flex-direction: column;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 100vh;
-  }
-  
-  .titleContainer {
-    display: flex;
-    flex-direction: column;
-    font-size: 64px;
-    font-weight: bolder;
-    align-items: center;
-    justify-content: center;
-  }
-  
-  .resultContainer,
-  .historyItem {
-    flex-direction: row;
-    display: flex;
-    width: 400px;
-    align-items: center;
-    justify-content: space-between;
-  }
-  
-  .historyContainer {
-    flex-direction: column;
-    display: flex;
-    height: 200px;
-    align-items: center;
-    flex-grow: 5;
-    justify-content: flex-start;
-  }
-  
-  .buttonContainer {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 260px;
-  }
-  
-  .inputContainer {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    justify-content: center;
-  }
-  
-  .inputContainer > .errorLabel {
-    color: red;
-    font-size: 12px;
-  }
-  
-  .inputBox {
-    height: 48px;
-    width: 400px;
-    font-size: large;
-    border-radius: 8px;
-    border: 1px solid grey;
-    padding-left: 8px;
-  }
-  html,
-body {
-  padding: 0;
-  margin: 0;
-  font-family:
-    -apple-system,
-    BlinkMacSystemFont,
-    Segoe UI,
-    Roboto,
-    Oxygen,
-    Ubuntu,
-    Cantarell,
-    Fira Sans,
-    Droid Sans,
-    Helvetica Neue,
-    sans-serif;
-}
-
-* {
-  box-sizing: border-box;
-}
-
-main {
-  padding: 5rem 0;
-  flex: 1;
+.auth-page {
+  min-height: 100vh;
   display: flex;
-  flex-direction: column;
   justify-content: center;
   align-items: center;
+  background: #f5f7fb;
+  padding: 24px;
 }
 
-code {
-  background: #fafafa;
-  border-radius: 5px;
-  padding: 0.75rem;
-  font-family:
-    Menlo,
-    Monaco,
-    Lucida Console,
-    Courier New,
-    monospace;
+.auth-card {
+  width: 100%;
+  max-width: 440px;
+  background: white;
+  padding: 42px;
+  border-radius: 18px;
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.08);
 }
 
-input[type='button'] {
-  border: none;
-  background: cornflowerblue;
-  color: white;
-  padding: 12px 24px;
-  margin: 8px;
+.auth-logo {
+  display: inline-block;
   font-size: 24px;
+  font-weight: 700;
+  text-decoration: none;
+  color: #2563eb;
+  margin-bottom: 28px;
+}
+
+.auth-card h1 {
+  font-size: 32px;
+  margin: 0 0 8px;
+  color: #1f2937;
+}
+
+.auth-subtitle {
+  color: #6b7280;
+  margin-bottom: 30px;
+}
+
+.auth-form {
+  display: flex;
+  flex-direction: column;
+}
+
+.auth-form label {
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: #374151;
+}
+
+.auth-form input {
+  width: 100%;
+  padding: 13px 14px;
+  margin-bottom: 20px;
+  border: 1px solid #d1d5db;
   border-radius: 8px;
+  font-size: 16px;
+  outline: none;
+}
+
+.auth-form input:focus {
+  border-color: #2563eb;
+}
+
+.auth-button {
+  width: 100%;
+  padding: 14px;
+  border: none;
+  border-radius: 8px;
+  background: #2563eb;
+  color: white;
+  font-size: 16px;
+  font-weight: 600;
   cursor: pointer;
+  margin-top: 4px;
+}
+
+.auth-button:hover {
+  background: #1d4ed8;
+}
+
+.auth-error {
+  color: #dc2626;
+  margin-top: 14px;
+  text-align: center;
+}
+
+.auth-switch {
+  text-align: center;
+  margin-top: 24px;
+  color: #6b7280;
+}
+
+.auth-switch a {
+  color: #2563eb;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.auth-switch a:hover {
+  text-decoration: underline;
+}
+
+@media (max-width: 500px) {
+  .auth-card {
+    padding: 30px 22px;
+  }
+
+  .auth-card h1 {
+    font-size: 28px;
+  }
 }

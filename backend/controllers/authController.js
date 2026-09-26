@@ -51,8 +51,19 @@ const login = async (req, res) => {
             return res.status(400).json({ message: 'Invalid email or password.' });
         }
 
-        const token = jwt.sign({ userId: user._id }, SECRET_KEY, { expiresIn: '1h' });
-        res.status(200).json({ message: 'Login successful', token });
+        const token = jwt.sign(
+            {
+                userId: user._id,
+                role: user.role || 'user'
+            },
+            SECRET_KEY,
+            { expiresIn: '1h' }
+        );
+        res.status(200).json({
+            message: 'Login successful',
+            token,
+            role: user.role || 'user'
+        });
     } catch (error) {
         console.error('Login error:', error.message);
         res.status(500).json({ message: 'Server error. Please try again later.' });
