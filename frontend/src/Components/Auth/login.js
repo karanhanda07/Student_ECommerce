@@ -19,7 +19,12 @@ const Login = () => {
 
             if (response.data.message === 'Login successful') {
                 localStorage.setItem('token', response.data.token);
-                navigate('/welcome');
+
+                if (response.data.role === 'admin') {
+                    navigate('/admin');
+                } else {
+                    navigate('/welcome');
+                }
             } else {
                 setMessage(response.data.message || 'Login failed.');
             }
