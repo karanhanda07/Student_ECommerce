@@ -1,42 +1,83 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-const Sell = ({ ads, setAds }) => {
+const Sell = () => {
     const [photo, setPhoto] = useState(null);
     const [name, setName] = useState('');
     const [price, setPrice] = useState('');
     const [description, setDescription] = useState('');
     const [message, setMessage] = useState('');
     const navigate = useNavigate();
-
     const handlePhotoChange = (event) => {
-        setPhoto(URL.createObjectURL(event.target.files[0])); // Create a preview of the image
+        const file = event.target.files[0];
+
+        if (!file) return;
+
+        // Limit images to 500 KB
+        if (file.size > 500 * 1024) {
+            setMessage('Please select an image smaller than 500 KB.');
+            setPhoto(null);
+            return;
+        }
+
+        // Convert the image into a string we can save
+        const reader = new FileReader();
+
+        reader.onloadend = () => {
+            setPhoto(reader.result);
+            setMessage('');
+        };
+
+        reader.readAsDataURL(file);
     };
 
-    const handleSubmit = (event) => {
+    const handleSubmit = async (event) => {
         event.preventDefault();
 
+        // Check that all fields are filled
         if (!photo || !name || !price || !description) {
             setMessage('Please fill out all fields.');
             return;
         }
 
-        const newAd = {
-            id: ads.length + 1,
-            photo,
-            name,
-            price,
-            description,
-        };
+        // Make sure the price is a valid positive number
+        const numericPrice = Number(price);
 
-        setAds([...ads, newAd]); // Add new ad to the list
+        if (!Number.isFinite(numericPrice) || numericPrice <= 0) {
+            setMessage('Please enter a valid price.');
+            return;
+        }
 
-        // Reset form
-        setPhoto(null);
-        setName('');
-        setPrice('');
-        setDescription('');
-        setMessage('Item listed for sale successfully!');
+        try {
+            // Send the product information to our Express backend
+            const response = await fetch('http://localhost:5000/api/products', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    name,
+                    price: numericPrice,
+                    description,
+                    image: photo // Send the image to MongoDB
+                })
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to save product.');
+            }
+
+            // The product is now saved in MongoDB
+            setPhoto(null);
+            setName('');
+            setPrice('');
+            setDescription('');
+            setMessage('Item listed for sale successfully!');
+
+        } catch (error) {
+            console.error('Error saving product:', error);
+            setMessage('Failed to list item. Please try again.');
+        }
     };
 
     return (

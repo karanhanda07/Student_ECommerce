@@ -3,12 +3,14 @@ const cors = require('cors');
 const mongoose = require('mongoose');
 const authRoutes = require('./routes/authRoutes');
 const app = express();
+const productRoutes = require('./routes/productRoutes');
 
 // Enable CORS
 app.use(cors());
 
 // Middleware
-app.use(express.json());
+// Allow small Base64 images in JSON requests
+app.use(express.json({ limit: '1mb' }));
 
 // MongoDB connection
 mongoose.connect('mongodb://127.0.0.1:27017/testDB', { useNewUrlParser: true, useUnifiedTopology: true })
@@ -17,7 +19,8 @@ mongoose.connect('mongodb://127.0.0.1:27017/testDB', { useNewUrlParser: true, us
 
 // Routes
 app.use('/api/auth', authRoutes);
-
+// Register the product API endpoints
+app.use('/api/products', productRoutes);
 // Start server
 app.listen(5000, () => {
     console.log('Server is running on http://localhost:5000');

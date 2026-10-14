@@ -9,9 +9,10 @@ import Sell from './Components/Sell';
 import ItemDetails from './Components/ItemDetails';
 import NavBar from './Components/Navbar/navbar';
 import Admin from './Components/Admin';
+import ProtectedRoute from './Components/ProtectedRoute';
 
 const App = () => {
-  const [ads, setAds] = useState([]);
+
 
   const ConditionalNavBar = () => {
     const location = useLocation();
@@ -32,11 +33,18 @@ const App = () => {
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/welcome" element={<Welcome />} />
-        <Route path="/buy" element={<Buy ads={ads} />} />
-        <Route path="/sell" element={<Sell ads={ads} setAds={setAds} />} />
+        <Route path="/buy" element={<Buy />} />
+        <Route path="/sell" element={<Sell />} />
         <Route path="/item/:id" element={<ItemDetails ads={ads} />} />
 
-        <Route path="/admin" element={<Admin />} />
+        <Route
+          path="/admin"
+          element={
+            <ProtectedRoute>
+              <Admin />
+            </ProtectedRoute>
+          }
+        />
       </Routes>
     </Router>
   );

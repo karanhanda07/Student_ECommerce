@@ -69,5 +69,31 @@ const login = async (req, res) => {
         res.status(500).json({ message: 'Server error. Please try again later.' });
     }
 };
+// Verify that the logged-in user is an admin
+const verifyAdmin = async (req, res) => {
+    // Read the token from the Authorization header
+    const token = req.headers.authorization?.split(' ')[1];
 
-module.exports = { signup, login };
+    if (!token) {
+        return res.status(401).json({ message: 'No token provided.' });
+    }
+
+    try {
+        // Verify the token signature and expiration
+        const decoded = jwt.verify(token, SECRET_KEY);
+
+        // Find the user in MongoDB using the ID from the token
+        const user = await User.findById(decoded.userId);
+
+        // Check the user's CURRENT role in the database
+        if (!user || user.role !== 'admin') {
+            return res.status(403).json({ message: 'Admin access denied.' });
+        }
+
+        return res.status(200).json({ message: 'Admin verified.' });
+    } catch (error) {
+        return res.status(401).json({ message: 'Invalid or expired token.' });
+    }
+};
+
+module.exports = { signup, login, verifyAdmin };

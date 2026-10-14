@@ -1,8 +1,15 @@
 const express = require('express');
-const { signup, login } = require('../controllers/authController');
+const { signup, login, verifyAdmin } = require('../controllers/authController');
+
 const router = express.Router();
 
-router.post('/signup', signup); // Signup route
-router.post('/login', login);   // Login route
+// Register a new user
+router.post('/signup', signup);
+
+// Log in an existing user
+router.post('/login', login);
+
+// Check whether the logged-in user is an admin
+router.get('/verify-admin', verifyAdmin);
 
 module.exports = router;

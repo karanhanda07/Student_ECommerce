@@ -1,40 +1,70 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-const Buy = ({ ads }) => {
+const Buy = () => {
     const navigate = useNavigate();
 
-    // Hardcoded sample items
-    const hardcodedItems = [
-        { id: 1, name: 'Laptop', description: 'A powerful laptop for students', price: '$1200' },
-        { id: 2, name: 'Textbooks', description: 'Set of 5 essential textbooks', price: '$100' },
-        { id: 3, name: 'Headphones', description: 'Noise-cancelling headphones', price: '$200' },
-    ];
+    // Store products received from MongoDB
+    const [products, setProducts] = useState([]);
 
-    // Combine hardcoded items with uploaded ads
-    const allItems = [...hardcodedItems, ...ads];
+    // Fetch products when the Buy page opens
+    useEffect(() => {
+        fetch('http://localhost:5000/api/products')
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error('Failed to fetch products');
+                }
+
+                return response.json();
+            })
+            .then((data) => {
+                // Save the products in React state
+                setProducts(data);
+            })
+            .catch((error) => {
+                console.error('Error fetching products:', error);
+            });
+    }, []);
+
+    // Keep existing temporary ads visible for now
+    const allItems = products;
 
     return (
         <div className="container">
             <h1>Available Items</h1>
+
             <div>
                 {allItems.map((item, index) => (
-                    <div key={index} className="card">
-                        {/* Show item photo if it exists */}
-                        {item.photo && (
+                    <div key={item._id || index} className="card">
+                        {/* Display the product image if available */}
+                        {(item.image || item.photo) && (
                             <img
-                                src={item.photo}
-                                alt="Item"
-                                style={{ width: '100%', height: '150px', objectFit: 'cover', borderRadius: '5px' }}
+                                src={item.image || item.photo}
+                                alt={item.name || 'Item'}
+                                style={{
+                                    width: '100%',
+                                    height: '150px',
+                                    objectFit: 'cover',
+                                    borderRadius: '5px'
+                                }}
                             />
                         )}
+
                         <h3>{item.name || 'Custom Item'}</h3>
                         <p>{item.description}</p>
-                        <p><strong>{item.price || 'Custom Price'}</strong></p>
-                        <button>Buy Now</button>
+                        <p>
+                            <strong>{item.price || 'Custom Price'}</strong>
+                        </p>
+
+                        <button
+                            onClick={() => navigate(`/item/${item._id}`)}
+                        >
+                            Buy Now
+                        </button>
                     </div>
                 ))}
             </div>
+
             <div style={{ marginTop: '20px' }}>
                 <button
                     onClick={() => navigate('/welcome')}
@@ -45,7 +75,7 @@ const Buy = ({ ads }) => {
                         border: 'none',
                         cursor: 'pointer',
                         borderRadius: '5px',
-                        marginTop: '20px',
+                        marginTop: '20px'
                     }}
                 >
                     Go Back to Home
