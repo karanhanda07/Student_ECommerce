@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -7,20 +8,23 @@ const Sell = () => {
     const [price, setPrice] = useState('');
     const [description, setDescription] = useState('');
     const [message, setMessage] = useState('');
+    const [saving, setSaving] = useState(false);
+
     const navigate = useNavigate();
+
+    // Check file size and convert image to Base64
     const handlePhotoChange = (event) => {
         const file = event.target.files[0];
 
         if (!file) return;
 
-        // Limit images to 500 KB
-        if (file.size > 500 * 1024) {
-            setMessage('Please select an image smaller than 500 KB.');
+        if (file.size > 2 * 1024 * 1024) {
+            setMessage('Please select an image smaller than 2 MB.');
             setPhoto(null);
+            event.target.value = '';
             return;
         }
 
-        // Convert the image into a string we can save
         const reader = new FileReader();
 
         reader.onloadend = () => {
@@ -31,16 +35,15 @@ const Sell = () => {
         reader.readAsDataURL(file);
     };
 
+    // Submit product to Express and MongoDB
     const handleSubmit = async (event) => {
         event.preventDefault();
 
-        // Check that all fields are filled
         if (!photo || !name || !price || !description) {
             setMessage('Please fill out all fields.');
             return;
         }
 
-        // Make sure the price is a valid positive number
         const numericPrice = Number(price);
 
         if (!Number.isFinite(numericPrice) || numericPrice <= 0) {
@@ -48,18 +51,21 @@ const Sell = () => {
             return;
         }
 
+        setSaving(true);
+        setMessage('');
+
         try {
-            // Send the product information to our Express backend
             const response = await fetch('http://localhost:5000/api/products', {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${localStorage.getItem('token')}`
                 },
                 body: JSON.stringify({
                     name,
                     price: numericPrice,
                     description,
-                    image: photo // Send the image to MongoDB
+                    image: photo
                 })
             });
 
@@ -67,80 +73,182 @@ const Sell = () => {
                 throw new Error('Failed to save product.');
             }
 
-            // The product is now saved in MongoDB
             setPhoto(null);
             setName('');
             setPrice('');
             setDescription('');
             setMessage('Item listed for sale successfully!');
 
+            // Clear the file input after successful upload
+            event.target.reset();
+
         } catch (error) {
             console.error('Error saving product:', error);
             setMessage('Failed to list item. Please try again.');
+        } finally {
+            setSaving(false);
         }
     };
 
-    return (
-        <div className="container">
-            <h1>Sell an Item</h1>
-            <form onSubmit={handleSubmit} style={{ textAlign: 'center' }}>
-                <div style={{ marginBottom: '15px' }}>
-                    <input
-                        type="file"
-                        accept="image/*"
-                        onChange={handlePhotoChange}
-                    />
-                </div>
-                <div style={{ marginBottom: '15px' }}>
-                    <input
-                        type="text"
-                        placeholder="Enter item name"
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
-                        style={{ padding: '10px', width: '300px' }}
-                    />
-                </div>
-                <div style={{ marginBottom: '15px' }}>
-                    <input
-                        type="text"
-                        placeholder="Enter item price"
-                        value={price}
-                        onChange={(e) => setPrice(e.target.value)}
-                        style={{ padding: '10px', width: '300px' }}
-                    />
-                </div>
-                <div style={{ marginBottom: '15px' }}>
-                    <textarea
-                        placeholder="Enter item description"
-                        value={description}
-                        onChange={(e) => setDescription(e.target.value)}
-                        style={{ padding: '10px', width: '300px', height: '100px' }}
-                    />
-                </div>
-                <button type="submit" style={{ padding: '10px 20px', cursor: 'pointer' }}>
-                    Submit
-                </button>
-                {message && <p style={{ color: 'green', marginTop: '10px' }}>{message}</p>}
-            </form>
+    const inputClass =
+        'w-full rounded-xl border border-slate-200 bg-white px-4 py-3.5 text-slate-800 outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-100';
 
-            {/* Add Go Back Button */}
-            <div style={{ marginTop: '30px' }}>
-                <button
-                    onClick={() => navigate('/welcome')} // Navigate back to the Welcome page
-                    style={{
-                        padding: '10px 20px',
-                        backgroundColor: '#007bff',
-                        color: 'white',
-                        border: 'none',
-                        cursor: 'pointer',
-                        borderRadius: '5px',
-                        marginTop: '20px',
-                    }}
-                >
-                    Go Back to Welcome Page
-                </button>
+    return (
+        <main className="mx-auto min-h-screen max-w-5xl px-5 py-12 md:px-10">
+
+            {/* Page heading */}
+            <div className="mb-10">
+                <span className="rounded-full border border-teal-200 bg-white/80 px-4 py-2 text-xs font-bold tracking-widest text-teal-700">
+                    STUDENT MARKETPLACE
+                </span>
+
+                <h1 className="mt-6 text-4xl font-extrabold text-slate-900 md:text-5xl">
+                    Sell an <span className="text-blue-600">Item</span>
+                </h1>
+
+                <p className="mt-3 text-lg text-slate-500">
+                    Give your items a second life and help another student.
+                </p>
             </div>
-        </div>
+
+            {/* Form card */}
+            <div className="overflow-hidden rounded-3xl border border-white/90 bg-white/90 shadow-2xl shadow-blue-100/50 backdrop-blur-xl">
+                <div className="grid md:grid-cols-5">
+
+                    {/* Decorative side panel */}
+                    <div className="flex flex-col justify-between bg-gradient-to-br from-blue-600 via-sky-500 to-teal-400 p-8 text-white md:col-span-2 md:p-10">
+                        <div>
+                            <div className="mb-8 text-6xl">📦</div>
+
+                            <h2 className="text-3xl font-extrabold leading-tight">
+                                Your next sale starts here.
+                            </h2>
+
+                            <p className="mt-5 leading-7 text-blue-50">
+                                List books, electronics, and everyday essentials
+                                for students in your community.
+                            </p>
+                        </div>
+
+                        <div className="mt-12 rounded-2xl border border-white/30 bg-white/15 p-5 backdrop-blur-sm">
+                            <p className="font-semibold">Quick tip</p>
+                            <p className="mt-2 text-sm leading-6 text-blue-50">
+                                Use a clear photo and an accurate description
+                                to help buyers understand your item.
+                            </p>
+                        </div>
+                    </div>
+
+                    {/* Product form */}
+                    <form onSubmit={handleSubmit} className="space-y-6 p-7 md:col-span-3 md:p-10">
+
+                        {/* Image upload */}
+                        <div>
+                            <label className="mb-2 block font-semibold text-slate-700">
+                                Product Photo
+                            </label>
+
+                            <div className="rounded-2xl border-2 border-dashed border-blue-200 bg-blue-50/50 p-5">
+                                <input
+                                    type="file"
+                                    accept="image/*"
+                                    onChange={handlePhotoChange}
+                                    className="block w-full text-sm text-slate-600 file:mr-4 file:rounded-lg file:border-0 file:bg-blue-600 file:px-4 file:py-2 file:font-semibold file:text-white hover:file:bg-blue-700"
+                                />
+
+                                <p className="mt-3 text-xs text-slate-500">
+                                    Maximum image size: 2 MB
+                                </p>
+
+                                {photo && (
+                                    <img
+                                        src={photo}
+                                        alt="Product preview"
+                                        className="mt-4 h-40 w-full rounded-xl object-contain"
+                                    />
+                                )}
+                            </div>
+                        </div>
+
+                        {/* Item name */}
+                        <div>
+                            <label className="mb-2 block font-semibold text-slate-700">
+                                Item Name
+                            </label>
+
+                            <input
+                                type="text"
+                                placeholder="e.g. Calculus Textbook"
+                                value={name}
+                                onChange={(event) => setName(event.target.value)}
+                                className={inputClass}
+                            />
+                        </div>
+
+                        {/* Price */}
+                        <div>
+                            <label className="mb-2 block font-semibold text-slate-700">
+                                Price ($)
+                            </label>
+
+                            <input
+                                type="number"
+                                min="0.01"
+                                step="0.01"
+                                placeholder="e.g. 25.00"
+                                value={price}
+                                onChange={(event) => setPrice(event.target.value)}
+                                className={inputClass}
+                            />
+                        </div>
+
+                        {/* Description */}
+                        <div>
+                            <label className="mb-2 block font-semibold text-slate-700">
+                                Description
+                            </label>
+
+                            <textarea
+                                placeholder="Describe your item's condition and details..."
+                                value={description}
+                                onChange={(event) => setDescription(event.target.value)}
+                                rows={4}
+                                className={`${inputClass} resize-none`}
+                            />
+                        </div>
+
+                        {/* Feedback */}
+                        {message && (
+                            <div
+                                className={`rounded-xl p-4 text-sm font-medium ${message.includes('successfully')
+                                    ? 'bg-green-50 text-green-700'
+                                    : 'bg-red-50 text-red-600'
+                                    }`}
+                            >
+                                {message}
+                            </div>
+                        )}
+
+                        {/* Submit */}
+                        <button
+                            type="submit"
+                            disabled={saving}
+                            className="w-full rounded-xl bg-blue-600 px-6 py-4 font-bold text-white shadow-lg shadow-blue-100 transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60"
+                        >
+                            {saving ? 'Publishing...' : 'List Item for Sale →'}
+                        </button>
+
+                        <button
+                            type="button"
+                            onClick={() => navigate('/welcome')}
+                            className="w-full rounded-xl border border-slate-200 bg-white px-6 py-3 font-semibold text-slate-600 transition hover:bg-slate-50"
+                        >
+                            ← Back to Home
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </main>
     );
 };
 

@@ -1,15 +1,26 @@
 const Product = require('../Models/Product');
-
+const jwt = require('jsonwebtoken');
 // Create a product
 const createProduct = async (req, res) => {
     try {
+        // Read the JWT from the Authorization header
+        const token = req.headers.authorization?.split(' ')[1];
+
+        // Reject requests without a token
+        if (!token) {
+            return res.status(401).json({ message: 'Login required' });
+        }
+
+        // Verify the token
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
         const { name, price, description, image } = req.body;
 
         const product = new Product({
             name,
             price,
             description,
-            image
+            image,
+            seller: decoded.userId // User ID obtained from the verified JWT
         });
 
         await product.save();
