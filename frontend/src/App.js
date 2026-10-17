@@ -1,15 +1,14 @@
-
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
-import HomePage from './Components/HomePage';
-import Login from './Components/Auth/login';
-import Signup from './Components/Auth/signup';
-import Welcome from './Components/Welcome';
-import Buy from './Components/Buy';
-import Sell from './Components/Sell';
-import ItemDetails from './Components/ItemDetails';
-import NavBar from './Components/Navbar/navbar';
-import Admin from './Components/Admin';
-import ProtectedRoute from './Components/ProtectedRoute';
+import HomePage from './pages/HomePage';
+import Login from './pages/Auth/login';
+import Signup from './pages/Auth/signup';
+import Welcome from './pages/Welcome';
+import Buy from './pages/Buy';
+import Sell from './pages/Sell';
+import ItemDetails from './pages/ItemDetails';
+import NavBar from './components/Navbar/navbar';
+import Admin from './pages/Admin';
+import ProtectedRoute from './components/ProtectedRoute';
 import './App.css';
 
 const ConditionalNavBar = () => {

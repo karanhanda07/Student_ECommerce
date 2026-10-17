@@ -56,13 +56,13 @@ const HomePage = () => {
             </header>
 
             {/* Hero */}
-            <main className="relative z-10 mx-auto grid max-w-7xl items-center gap-12 px-6 py-16 md:grid-cols-2 md:px-10 md:py-24">
+            <main className="relative z-10 mx-auto grid max-w-7xl items-center gap-8 px-6 py-10 md:grid-cols-2 md:px-10 md:py-12">
                 <section>
                     <span className="inline-block rounded-full border border-blue-200 bg-white/80 px-5 py-2 text-xs font-bold tracking-[0.2em] text-blue-600">
                         STUDENT TO STUDENT
                     </span>
 
-                    <h1 className="mt-8 text-5xl font-extrabold leading-tight tracking-tight text-slate-900 md:text-7xl">
+                    <h1 className="mt-6 text-5xl font-extrabold leading-tight tracking-tight text-slate-900 md:text-6xl">
                         Buy. Sell.
                         <br />
                         Support
@@ -97,10 +97,13 @@ const HomePage = () => {
                         <img
                             src={heroImage}
                             alt="Students buying and selling products"
-                            className="w-full rounded-[2rem]"
+                            className="max-h-[380px] w-full rounded-[2rem] object-contain"
                         />
                     </div>
                 </section>
+                <div className="text-center text-sm font-semibold text-blue-600 md:col-span-2">
+                    ↓ Scroll to explore
+                </div>
             </main>
 
             {/* Features */}
