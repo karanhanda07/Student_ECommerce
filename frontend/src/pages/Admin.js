@@ -1,5 +1,6 @@
 
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 
 const Admin = () => {
     const [users, setUsers] = useState([]);
@@ -143,6 +144,8 @@ const Admin = () => {
 
                     {/* Products and Orders */}
                     <div className="space-y-6">
+
+                        {/* Products */}
                         <div className="rounded-3xl border border-white/90 bg-white/85 p-7 shadow-xl shadow-blue-100/50 backdrop-blur-xl">
                             <div className="mb-4 inline-flex rounded-2xl bg-teal-100 p-3 text-2xl">
                                 📦
@@ -156,14 +159,16 @@ const Admin = () => {
                                 View and manage marketplace products.
                             </p>
 
-                            <button
-                                disabled
-                                className="rounded-xl bg-slate-100 px-5 py-3 font-semibold text-slate-400"
+                            {/* Navigate to the separate product management page */}
+                            <Link
+                                to="/admin/products"
+                                className="inline-block rounded-xl bg-blue-600 px-5 py-3 font-semibold text-white transition hover:bg-blue-700"
                             >
-                                Manage Products — Coming Soon
-                            </button>
+                                Manage Products
+                            </Link>
                         </div>
 
+                        {/* Orders */}
                         <div className="rounded-3xl border border-white/90 bg-white/85 p-7 shadow-xl shadow-blue-100/50 backdrop-blur-xl">
                             <div className="mb-4 inline-flex rounded-2xl bg-amber-100 p-3 text-2xl">
                                 🛒

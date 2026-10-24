@@ -9,6 +9,7 @@ import ItemDetails from './pages/ItemDetails';
 import NavBar from './components/Navbar/navbar';
 import Admin from './pages/Admin';
 import ProtectedRoute from './components/ProtectedRoute';
+import AdminProducts from './pages/AdminProducts';
 import './App.css';
 
 const ConditionalNavBar = () => {
@@ -41,6 +42,14 @@ const App = () => {
             element={
               <ProtectedRoute>
                 <Admin />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/products"
+            element={
+              <ProtectedRoute>
+                <AdminProducts />
               </ProtectedRoute>
             }
           />

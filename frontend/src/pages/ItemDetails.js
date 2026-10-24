@@ -1,12 +1,14 @@
 
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-
+import { Link, useLocation } from 'react-router-dom';
 const ItemDetails = () => {
     // Get the product ID from the URL
     const { id } = useParams();
     const navigate = useNavigate();
-
+    // Check whether the admin opened this product
+    const location = useLocation();
+    const fromAdmin = new URLSearchParams(location.search).get('from') === 'admin';
     // Store the selected product
     const [item, setItem] = useState(null);
 
@@ -78,13 +80,15 @@ const ItemDetails = () => {
     return (
         <main className="mx-auto min-h-[85vh] max-w-6xl px-5 py-12 md:px-10">
 
-            {/* Back navigation */}
-            <button
-                onClick={() => navigate('/buy')}
-                className="mb-8 inline-flex items-center gap-2 font-semibold text-blue-600 transition hover:text-blue-800"
-            >
-                ← Back to Marketplace
-            </button>
+            {/* Show this link when coming from Manage Products */}
+            {fromAdmin && (
+                <Link
+                    to="/admin/products"
+                    className="mb-5 inline-block font-semibold text-blue-600 hover:text-blue-800"
+                >
+                    ← Back to Manage Products
+                </Link>
+            )}
 
             {/* Product details card */}
             <div className="overflow-hidden rounded-3xl border border-white/90 bg-white/90 shadow-2xl shadow-blue-100/50 backdrop-blur-xl">
